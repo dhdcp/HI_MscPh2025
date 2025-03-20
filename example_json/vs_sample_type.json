@@ -1,0 +1,23 @@
+{
+    "resourceType": "ValueSet",
+    "id": "specimen-type-valueset",
+    "url": "http://example.org/fhir/ValueSet/specimen-type",
+    "name": "SpecimenTypeValueSet",
+    "title": "Specimen Type Value Set",
+    "status": "draft",
+    "publisher": "Your Organization",
+    "compose": {
+      "include": [
+        {
+          "system": "http://snomed.info/sct",
+          "concept": [
+            { "code": "122554006", "display": "Blood specimen" },
+            { "code": "119376003", "display": "Saliva specimen" },
+            { "code": "119364003", "display": "Urine specimen" },
+            { "code": "430823007", "display": "Tissue biopsy sample" },
+            { "code": "258580003", "display": "Sputum specimen" }
+          ]
+        }
+      ]
+    }
+  }
