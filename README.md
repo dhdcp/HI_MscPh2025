@@ -29,8 +29,9 @@ we assume you know JSON format and basics of Python , if not please got
     - [Chapter 2 slides](https://projector-video-pdf-converter.datacamp.com/735/chapter2.pdf)
     - [chapter 3 slides](https://projector-video-pdf-converter.datacamp.com/735/chapter3.pdf)
     - [chapter 4 slides](https://projector-video-pdf-converter.datacamp.com/735/chapter4.pdf)
+      
 ** You don't need to install anything in your laptop if you  don't want, you can use [google colab]('https://colab.research.google.com/')) to run and learn python for free** 
-Click on the link, sign in with google account, and strat practicing python. :D 
+Click on the link, sign in with google account, and strat practicing python. :D **
 
 
 ## Content 
