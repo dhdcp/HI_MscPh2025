@@ -39,4 +39,4 @@ Click on the link, sign in with google account, and strat practicing python. :D
 
 
 ## Reflection : 
-[Why we are talking about FHIR in Telemedicine class :D ?](Reading_list.md)
+[Why we are talking about FHIR ?](Reading_list.md)
