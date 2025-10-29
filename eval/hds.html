@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interoperability Activities</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for feedback */
+        .input-correct {
+            border-color: #10B981; /* green-500 */
+            box-shadow: 0 0 0 2px #A7F3D0; /* green-200 */
+        }
+        .input-incorrect {
+            border-color: #EF4444; /* red-500 */
+            box-shadow: 0 0 0 2px #FECDD3; /* red-200 */
+        }
+        .feedback-cell {
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding-left: 0.75rem;
+        }
+        .feedback-correct {
+            color: #10B981; /* green-600 */
+        }
+        .feedback-incorrect {
+            color: #EF4444; /* red-600 */
+        }
+        /* Styles for active/inactive tabs */
+        .nav-tab {
+            @apply px-4 py-3 font-medium text-sm text-gray-600 border-b-2 border-transparent hover:text-blue-600 hover:border-blue-600 cursor-pointer;
+        }
+        .nav-tab-active {
+            @apply text-blue-600 border-blue-600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Login View -->
+    <div id="login-view" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-10 rounded-lg shadow-xl text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Interoperability Activities</h1>
+            <p class="text-gray-600 mb-8">Please sign in to continue.</p>
+            <button id="google-login-btn" class="flex items-center justify-center w-full px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50">
+                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                <span class="font-semibold text-gray-700">Sign in with Google</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Application View (Hidden by default) -->
+    <div id="app-view" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 hidden">
+        
+        <!-- App Header -->
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <span class="text-gray-700">Welcome, <strong id="user-name"></strong>!</span>
+                <span class="text-gray-500 text-sm ml-2" id="user-email"></span>
+            </div>
+            <button id="sign-out-btn" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600 transition duration-300 text-sm">Sign Out</button>
+        </div>
+
+        <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+            <!-- Navigation Tabs -->
+            <nav class="flex border-b border-gray-200">
+                <button id="nav-activity-1" class="nav-tab nav-tab-active">Activity 1: Terminology</button>
+                <button id="nav-activity-2" class="nav-tab">Activity 2: FHIR Mapping</button>
+            </nav>
+            
+            <!-- ====== Activity 1: Terminology Standardization ====== -->
+            <div id="activity-1-view">
+                <div class="p-6 sm:p-8 border-b border-gray-200">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Activity 1: Data Standardization</h1>
+                    <p class="text-lg text-gray-600">Your job is to standardize the "dirty" EMR data below using international terminologies.</p>
+                </div>
+
+                <!-- Instructions Section -->
+                <div class="p-6 sm:p-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Student Instructions</h2>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Review the **"Original 'Dirty' EMR Data"** table (Table 1).</li>
+                        <li>Go to the **"Student Assignment Table"** (Table 2).</li>
+                        <li>Read the `Doctor's Notes` and `Final Diagnosis` text from Table 1 for each patient.</li>
+                        <li>Use the **OHDSI Athena browser** linked below to find the best matching code for all three columns (SNOMED, LOINC, ICD).</li>
+                        <li>Type your answers into the input boxes.</li>
+                        <li>Click **"Check Answers"** to get self-feedback (this is not your final submission).
+                        <li>When you are confident, click **"Submit for Grading"**.</li>
+                    </ol>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Terminology Tool</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="https://athena.ohdsi.org/search-terms/start" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-300">
+                            OHDSI Athena Terminology Browser (SNOMED, LOINC, ICD, etc.)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Table 1: Dirty Data -->
+                <div class="p-6 sm:p-8 border-t border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 1: Original "Dirty" EMR Data (Reference)</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor's Notes</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lab Test Ordered</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Final Diagnosis (Text)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="dirty-data-body">
+                                <!-- Rows will be injected by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 2: Assignment Table -->
+                <div class="p-6 sm:p-8 border-t border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 2: Student Assignment Table</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Final Diagnosis (Text)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SNOMED_Code (Symptom)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LOINC_Code (Lab Test)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ICD_Code (Diagnosis)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feedback</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="assignment-body">
+                                <!-- Rows will be injected by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-4 items-center">
+                        <button id="check-answers" class="px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition duration-300">Check Answers</button>
+                        <button id="reset-activity" class="px-5 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow hover:bg-gray-600 transition duration-300">Reset</button>
+                        <button id="toggle-key" class="px-5 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition duration-300">Show Answer Key</button>
+                        <button id="submit-assignment" class="px-5 py-2 bg-blue-700 text-white font-bold rounded-lg shadow hover:bg-blue-800 transition duration-300">Submit for Grading</button>
+                        <span id="status-message" class="text-gray-700 font-medium"></span>
+                    </div>
+                </div>
+
+                <!-- Answer Key (Hidden by default) -->
+                <div id="answer-key-section" class="p-6 sm:p-8 border-t border-gray-200 hidden">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Answer Key</h2>
+                    <p class="text-gray-600 mb-4">Note: Students may find different, but still valid, codes. This is a great discussion point about "semantic mapping"!</p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SNOMED_Code</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LOINC_Code</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ICD_Code</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="answer-key-body">
+                                <!-- Answer key rows will be injected by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== Activity 2: FHIR Resource Mapping ====== -->
+            <div id="activity-2-view" class="hidden">
+                <div class="p-6 sm:p-8 border-b border-gray-200">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Activity 2: FHIR Knowledge Assessment</h1>
+                    <p class="text-lg text-gray-600">Your task is to analyze the EWARS form below and map its fields to the correct FHIR Resources and Elements.</p>
+                </div>
+
+                <!-- Instructions Section -->
+                <div class="p-6 sm:p-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Student Instructions</h2>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Review the EWARS form image below (this is your source document).</li>
+                        <li>Fill in the missing information in the **"Resource Mapping"** and **"Terminology Standards"** tables.</li>
+                        <li>Use the official <a href="https://www.hl7.org/fhir/resourcelist.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">FHIR R4 Resource List</a> as your primary reference.</li>
+                        <li>Click **"Check FHIR Answers"** to get self-feedback.</li>
+                        <li>When you are confident, click **"Submit FHIR Assignment"**.</li>
+                    </ol>
+
+                    <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">EWARS Form (Reference)</h3>
+                    <!-- 
+                        IMPORTANT: You must replace the 'src' attribute below with a URL to a screenshot
+                        of the EWARS form. You can upload your screenshot to a free image host 
+                        (like imgur.com) or to your own GitHub/Firebase hosting.
+                    -->
+                    <img id="ewars-form-image" 
+                         src="https://placehold.co/1000x800/eee/ccc?text=Replace+This+With+Screenshot+of+EWARS+Form.pdf" 
+                         alt="EWARS Form - Please replace this placeholder"
+                         class="w-full max-w-4xl mx-auto border-2 border-dashed border-gray-400 rounded-lg">
+                </div>
+
+                <!-- Table 3: FHIR Resource Mapping -->
+                <div class="p-6 sm:p-8 border-t border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 3: FHIR Resource Mapping</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EWARS Field</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FHIR Resource</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FHIR Element Path</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cardinality</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="fhir-mapping-body">
+                                <!-- Rows will be injected by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Table 4: Terminology Standards -->
+                <div class="p-6 sm:p-8 border-t border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 4: Terminology Standards</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Element</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Primary System</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Secondary System</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identifier System</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="terminology-mapping-body">
+                                <!-- Rows will be injected by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activity 2 Controls -->
+                <div class="p-6 sm:p-8 border-t border-gray-200">
+                    <div class="mt-6 flex flex-wrap gap-4 items-center">
+                        <button id="check-fhir-answers" class="px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition duration-300">Check FHIR Answers</button>
+                        <button id="reset-fhir-activity" class="px-5 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow hover:bg-gray-600 transition duration-300">Reset FHIR</button>
+                        <button id="submit-fhir-assignment" class="px-5 py-2 bg-blue-700 text-white font-bold rounded-lg shadow hover:bg-blue-800 transition duration-300">Submit FHIR Assignment</button>
+                        <span id="fhir-status-message" class="text-gray-700 font-medium"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signOut, 
+            onAuthStateChanged,
+            signInAnonymously,
+            signInWithCustomToken
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc,
+            setLogLevel
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Config ---
+        // These global variables are provided by the environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseConfig;
+        try {
+            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        } catch (e) {
+            console.error("Firebase config is not valid JSON", e);
+            firebaseConfig = {}; // Fallback
+        }
+
+        // --- Initialize Firebase ---
+        let app, auth, db;
+        let currentUserId = null;
+        let currentUserName = null;
+        let currentUserEmail = null;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            setLogLevel('Debug');
+        } catch (e) {
+            console.error("Error initializing Firebase:", e);
+            document.body.innerHTML = "Error initializing Firebase. Please check console.";
+        }
+
+
+        // --- DOM Elements ---
+        const loginView = document.getElementById('login-view');
+        const appView = document.getElementById('app-view');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+
+        // --- Navigation ---
+        const navActivity1 = document.getElementById('nav-activity-1');
+        const navActivity2 = document.getElementById('nav-activity-2');
+        const viewActivity1 = document.getElementById('activity-1-view');
+        const viewActivity2 = document.getElementById('activity-2-view');
+
+        // --- Activity 1 Elements ---
+        const checkAnswersBtn = document.getElementById('check-answers');
+        const resetActivityBtn = document.getElementById('reset-activity');
+        const toggleKeyBtn = document.getElementById('toggle-key');
+        const submitAssignmentBtn = document.getElementById('submit-assignment');
+        const statusMessageEl = document.getElementById('status-message');
+        const dirtyBody = document.getElementById('dirty-data-body');
+        const assignmentBody = document.getElementById('assignment-body');
+        const answerKeyBody = document.getElementById('answer-key-body');
+        const answerKeySection = document.getElementById('answer-key-section');
+        
+        // --- Activity 2 Elements ---
+        const fhirMappingBody = document.getElementById('fhir-mapping-body');
+        const terminologyMappingBody = document.getElementById('terminology-mapping-body');
+        const checkFhirAnswersBtn = document.getElementById('check-fhir-answers');
+        const resetFhirActivityBtn = document.getElementById('reset-fhir-activity');
+        const submitFhirAssignmentBtn = document.getElementById('submit-fhir-assignment');
+        const fhirStatusMessageEl = document.getElementById('fhir-status-message');
+
+        // --- Data: Activity 1 ---
+        const dirtyData = [
+            { name: "Maria Chen", notes: "Complains of severe chest pain and shortness of breath. Hx of MI.", lab: '"Troponin T, 4th gen"', diagnosis: "Acute Myocardial Infarction" },
+            { name: "David Lee", notes: "Patient has uncontrolled diabetes. Presents with 2cm ulcer on right foot.", lab: '"Blood Sugar"', diagnosis: "Type 2 diabetes with foot ulcer" },
+            { name: "Sarah Jenkins", notes: "Fever, bad cough, and body aches for 3 days. Suspect flu.", lab: '"Rapid flu test"', diagnosis: "Influenza with pneumonia" },
+            { name: "Kenji Tanaka", notes: "Routine annual checkup. Patient feels well. Screen for kidney function.", lab: '"Creatinine level"', diagnosis: "Routine health check" },
+            { name: "Anjali Sharma", notes: 'Patient reports being "very tired" and pale.', lab: '"Complete Blood Count"', diagnosis: "Iron deficiency anemia" }
+        ];
+
+        const answerKey = [
+            { name: "Maria Chen", snomed: "29857009", loinc: "6598-7", icd: "BA41.0" },
+            { name: "David Lee", snomed: "163040003", loinc: "14749-6", icd: "9B71.1&KC92.2" },
+            { name: "Sarah Jenkins", snomed: "49727002", loinc: "94500-6", icd: "1C21.0" },
+            { name: "Kenji Tanaka", snomed: "185349003", loinc: "2160-0", icd: "QA00" },
+            { name: "Anjali Sharma", snomed: "271737000", loinc: "718-7", icd: "3A00" }
+        ];
+        
+        // --- Data: Activity 2 ---
+        const fhirMappingQuestions = [
+            { section: "Administrative Data", field: "Sentinel Site Name" },
+            { field: "Email" },
+            { field: "Serial Number (SN)" },
+            { field: "Nepali Date" },
+            { field: "Week No" },
+            { field: "Reg. No" },
+            { section: "Patient Demographics", field: "Name of Patient" },
+            { field: "Age" },
+            { field: "Sex" },
+            { field: "District" },
+            { field: "Municipality" },
+            { field: "Ward No." },
+            { field: "Village/Tole" },
+            { field: "Contact No" },
+        ];
+        
+        const fhirMappingAnswerKey = [
+            { resource: "Organization", path: "Organization.name", card: "1..1" },
+            { resource: "Organization", path: "Organization.telecom", card: "0..*" },
+            { resource: "Encounter", path: "Encounter.identifier", card: "1..1" },
+            { resource: "Encounter", path: "Encounter.period.start", card: "1..1" },
+            { resource: "Observation", path: "Observation", card: "0..1" }, // Simplified for this exercise
+            { resource: "Patient", path: "Patient.identifier", card: "1..1" },
+            { resource: "Patient", path: "Patient.name", card: "1..1" },
+            { resource: "Patient", path: "Patient.birthDate", card: "0..1" }, // Calculated from Age
+            { resource: "Patient", path: "Patient.gender", card: "1..1" },
+            { resource: "Patient", path: "Patient.address.district", card: "0..1" },
+            { resource: "Patient", path: "Patient.address.city", card: "0..1" },
+            { resource: "Patient", path: "Patient.address.line[0]", card: "0..1" },
+            { resource: "Patient", path: "Patient.address.line[1]", card: "0..1" },
+            { resource: "Patient", path: "Patient.telecom", card: "0..*" },
+        ];
+        
+        const terminologyMappingQuestions = [
+            { element: "Diseases" },
+            { element: "Lab Tests" },
+            { element: "Test Results" },
+            { element: "Diagnosis Status" },
+            { element: "Encounter Class" },
+            { element: "Administrative Gender" },
+            { element: "Patient ID" },
+        ];
+        
+        const terminologyMappingAnswerKey = [
+            { primary: "SNOMED CT", secondary: "ICD-10-CM", identifier: "" },
+            { primary: "LOINC", secondary: "SNOMED CT", identifier: "" },
+            { primary: "SNOMED CT", secondary: "Local codes", identifier: "" },
+            { primary: "FHIR value set", secondary: "", identifier: "" }, // http://hl7.org/fhir/valueset-condition-ver-status.html
+            { primary: "FHIR V3 ActCode", secondary: "", identifier: "" }, // http://hl7.org/fhir/v3/ActCode/vs.html
+            { primary: "FHIR administrative-gender", secondary: "", identifier: "" }, // http://hl7.org/fhir/valueset-administrative-gender.html
+            { primary: "Local Registry", secondary: "", identifier: "urn:oid:2.16..." },
+        ];
+
+        // --- Functions ---
+        
+        // --- Navigation Functions ---
+        function showActivity1() {
+            viewActivity1.classList.remove('hidden');
+            viewActivity2.classList.add('hidden');
+            navActivity1.classList.add('nav-tab-active');
+            navActivity2.classList.remove('nav-tab-active');
+        }
+        function showActivity2() {
+            viewActivity1.classList.add('hidden');
+            viewActivity2.classList.remove('hidden');
+            navActivity1.classList.remove('nav-tab-active');
+            navActivity2.classList.add('nav-tab-active');
+        }
+        
+        navActivity1.addEventListener('click', showActivity1);
+        navActivity2.addEventListener('click', showActivity2);
+
+        // --- Activity 1 Functions ---
+
+        // Populate Table 1: Dirty Data
+        function populateDirtyTable() {
+            dirtyBody.innerHTML = ''; // Clear existing
+            dirtyData.forEach(row => {
+                dirtyBody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.notes}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.lab}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.diagnosis}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Populate Table 2: Assignment Table
+        function populateAssignmentTable() {
+            assignmentBody.innerHTML = ''; // Clear existing
+            dirtyData.forEach((row, index) => {
+                assignmentBody.innerHTML += `
+                    <tr class_id="assignment-row-${index}">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.diagnosis}</td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="snomed-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="SNOMED Code">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="loinc-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="LOINC Code">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="icd-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ICD-11 Code">
+                        </td>
+                        <td class="feedback-cell" id="feedback-${index}"></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Populate Answer Key Table
+        function populateAnswerKey() {
+            answerKeyBody.innerHTML = ''; // Clear existing
+            answerKey.forEach(row => {
+                answerKeyBody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.snomed}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.loinc}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.icd}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // --- Auth Functions ---
+        
+        // Sign in with Google
+        googleLoginBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged will handle the UI update
+            } catch (error) {
+                console.error("Error signing in with Google:", error);
+                statusMessageEl.textContent = `Login Error: ${error.message}`;
+            }
+        });
+
+        // Sign out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // onAuthStateChanged will handle the UI update
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                currentUserId = user.uid;
+                currentUserName = user.displayName;
+                currentUserEmail = user.email;
+
+                userNameEl.textContent = currentUserName;
+                userEmailEl.textContent = `(${currentUserEmail})`;
+
+                // Show app, hide login
+                appView.classList.remove('hidden');
+                loginView.classList.add('hidden');
+
+                // Load app data for BOTH activities
+                populateDirtyTable();
+                populateAssignmentTable();
+                populateAnswerKey();
+                
+                populateFhirMappingTable();
+                populateTerminologyMappingTable();
+                
+                // Check for existing submissions for BOTH activities
+                checkExistingSubmission();
+                checkExistingFhirSubmission();
+
+            } else {
+                // User is signed out
+                currentUserId = null;
+                currentUserName = null;
+                currentUserEmail = null;
+
+                // Show login, hide app
+                appView.classList.add('hidden');
+                loginView.classList.remove('hidden');
+            }
+        });
+
+        // Check for existing submission (Activity 1)
+        async function checkExistingSubmission() {
+            if (!currentUserId) return;
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "submissions", currentUserId);
+            
+            try {
+                const docSnap = await getDoc(submissionRef);
+                if (docSnap.exists()) {
+                    statusMessageEl.textContent = "You have already submitted this assignment.";
+                    submitAssignmentBtn.disabled = true;
+                    submitAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    const submissionData = docSnap.data();
+                    if (submissionData.answers) {
+                        submissionData.answers.forEach((answer, index) => {
+                            document.getElementById(`snomed-${index}`).value = answer.snomed || '';
+                            document.getElementById(`loinc-${index}`).value = answer.loinc || '';
+                            document.getElementById(`icd-${index}`).value = answer.icd || '';
+                        });
+                    }
+                } else {
+                    statusMessageEl.textContent = "Complete the activity and submit when ready.";
+                    submitAssignmentBtn.disabled = false;
+                    submitAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.error("Error checking submission 1:", error);
+                statusMessageEl.textContent = "Error checking previous submission.";
+            }
+        }
+        
+        // Initial Auth Check
+        (async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth); // Fallback for environments without token
+                }
+            } catch (error) {
+                console.error("Anonymous sign-in failed:", error);
+            }
+        })();
+
+
+        // --- Activity 1 Event Listeners ---
+
+        checkAnswersBtn.addEventListener('click', () => {
+            answerKey.forEach((key, index) => {
+                const snomedInput = document.getElementById(`snomed-${index}`);
+                const loincInput = document.getElementById(`loinc-${index}`);
+                const icdInput = document.getElementById(`icd-${index}`);
+                const feedbackCell = document.getElementById(`feedback-${index}`);
+
+                let rowCorrect = 0;
+                
+                // Check SNOMED
+                if (snomedInput.value.trim() === key.snomed) {
+                    snomedInput.className = snomedInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    snomedInput.className = snomedInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Check LOINC
+                if (loincInput.value.trim() === key.loinc) {
+                    loincInput.className = loincInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    loincInput.className = loincInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Check ICD
+                if (icdInput.value.trim() === key.icd) {
+                    icdInput.className = icdInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    icdInput.className = icdInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Update feedback cell
+                if (rowCorrect === 3) {
+                    feedbackCell.textContent = 'Correct!';
+                    feedbackCell.className = 'feedback-cell feedback-correct';
+                } else {
+                    feedbackCell.textContent = `Try again (${rowCorrect}/3 correct)`;
+                    feedbackCell.className = 'feedback-cell feedback-incorrect';
+                }
+            });
+        });
+
+        resetActivityBtn.addEventListener('click', () => {
+            answerKey.forEach((key, index) => {
+                document.getElementById(`snomed-${index}`).value = '';
+                document.getElementById(`loinc-${index}`).value = '';
+                document.getElementById(`icd-${index}`).value = '';
+
+                document.getElementById(`snomed-${index}`).className = document.getElementById(`snomed-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`loinc-${index}`).className = document.getElementById(`loinc-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`icd-${index}`).className = document.getElementById(`icd-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                
+                document.getElementById(`feedback-${index}`).textContent = '';
+            });
+        });
+
+        toggleKeyBtn.addEventListener('click', (e) => {
+            const isHidden = answerKeySection.classList.contains('hidden');
+            if (isHidden) {
+                answerKeySection.classList.remove('hidden');
+                e.target.textContent = 'Hide Answer Key';
+                e.target.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                e.target.classList.add('bg-red-500', 'hover:bg-red-600');
+            } else {
+                answerKeySection.classList.add('hidden');
+                e.target.textContent = 'Show Answer Key';
+                e.target.classList.remove('bg-red-500', 'hover:bg-red-600');
+                e.target.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        });
+
+        submitAssignmentBtn.addEventListener('click', async () => {
+            if (!currentUserId) {
+                statusMessageEl.textContent = "You must be logged in to submit.";
+                return;
+            }
+
+            statusMessageEl.textContent = "Submitting...";
+            submitAssignmentBtn.disabled = true;
+            submitAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            let correctCount = 0;
+            const totalCount = answerKey.length * 3;
+            const studentAnswers = [];
+
+            answerKey.forEach((key, index) => {
+                const snomedAns = document.getElementById(`snomed-${index}`).value.trim();
+                const loincAns = document.getElementById(`loinc-${index}`).value.trim();
+                const icdAns = document.getElementById(`icd-${index}`).value.trim();
+
+                studentAnswers.push({ snomed: snomedAns, loinc: loincAns, icd: icdAns });
+
+                if (snomedAns === key.snomed) correctCount++;
+                if (loincAns === key.loinc) correctCount++;
+                if (icdAns === key.icd) correctCount++;
+            });
+
+            const score = (correctCount / totalCount) * 100;
+
+            const submission = {
+                userId: currentUserId,
+                userName: currentUserName,
+                userEmail: currentUserEmail,
+                submittedAt: new Date().toISOString(),
+                answers: studentAnswers,
+                score: parseFloat(score.toFixed(2))
+            };
+
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "submissions", currentUserId);
+
+            try {
+                await setDoc(submissionRef, submission);
+                statusMessageEl.textContent = "Submission successful! Your work is saved.";
+            } catch (error) {
+                console.error("Error submitting assignment 1:", error);
+                statusMessageEl.textContent = `Error: ${error.message}. Please try again.`;
+                submitAssignmentBtn.disabled = false;
+                submitAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        // --- Activity 2 Functions ---
+
+        // Populate Table 3: FHIR Resource Mapping
+        function populateFhirMappingTable() {
+            fhirMappingBody.innerHTML = ''; // Clear existing
+            fhirMappingQuestions.forEach((row, index) => {
+                let fieldCell = row.field;
+                if (row.section) {
+                    fieldCell = `<strong class="block text-gray-900">${row.section}</strong>${row.field}`;
+                }
+                
+                fhirMappingBody.innerHTML += `
+                    <tr class_id="fhir-row-${index}">
+                        <td class="px-4 py-3 text-sm text-gray-600">${fieldCell}</td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="fhir-resource-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Patient">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="fhir-path-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Patient.name">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="fhir-card-${index}" class="w-24 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 1..1">
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // Populate Table 4: Terminology Standards
+        function populateTerminologyMappingTable() {
+            terminologyMappingBody.innerHTML = ''; // Clear existing
+            terminologyMappingQuestions.forEach((row, index) => {
+                terminologyMappingBody.innerHTML += `
+                    <tr class_id="term-row-${index}">
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.element}</td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="term-primary-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Primary System">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="term-secondary-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Secondary System">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="term-identifier-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Identifier System">
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // Check for existing FHIR submission (Activity 2)
+        async function checkExistingFhirSubmission() {
+            if (!currentUserId) return;
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "fhirSubmissions", currentUserId);
+            
+            try {
+                const docSnap = await getDoc(submissionRef);
+                if (docSnap.exists()) {
+                    fhirStatusMessageEl.textContent = "You have already submitted this assignment.";
+                    submitFhirAssignmentBtn.disabled = true;
+                    submitFhirAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    // Load their previous answers
+                    const data = docSnap.data();
+                    if (data.fhirMapping) {
+                        data.fhirMapping.forEach((ans, i) => {
+                            document.getElementById(`fhir-resource-${i}`).value = ans.resource || '';
+                            document.getElementById(`fhir-path-${i}`).value = ans.path || '';
+                            document.getElementById(`fhir-card-${i}`).value = ans.card || '';
+                        });
+                    }
+                    if (data.terminologyMapping) {
+                        data.terminologyMapping.forEach((ans, i) => {
+                            document.getElementById(`term-primary-${i}`).value = ans.primary || '';
+                            document.getElementById(`term-secondary-${i}`).value = ans.secondary || '';
+                            document.getElementById(`term-identifier-${i}`).value = ans.identifier || '';
+                        });
+                    }
+                } else {
+                    fhirStatusMessageEl.textContent = "Complete the activity and submit when ready.";
+                    submitFhirAssignmentBtn.disabled = false;
+                    submitFhirAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.error("Error checking submission 2:", error);
+                fhirStatusMessageEl.textContent = "Error checking previous submission.";
+            }
+        }
+        
+        // --- Activity 2 Event Listeners ---
+        
+        // Check FHIR Answers
+        checkFhirAnswersBtn.addEventListener('click', () => {
+            // Check Table 3
+            fhirMappingAnswerKey.forEach((key, index) => {
+                const resourceInput = document.getElementById(`fhir-resource-${index}`);
+                const pathInput = document.getElementById(`fhir-path-${index}`);
+                const cardInput = document.getElementById(`fhir-card-${index}`);
+                
+                checkInput(resourceInput, key.resource);
+                checkInput(pathInput, key.path);
+                checkInput(cardInput, key.card);
+            });
+            
+            // Check Table 4
+            terminologyMappingAnswerKey.forEach((key, index) => {
+                const primaryInput = document.getElementById(`term-primary-${index}`);
+                const secondaryInput = document.getElementById(`term-secondary-${index}`);
+                const identifierInput = document.getElementById(`term-identifier-${index}`);
+                
+                checkInput(primaryInput, key.primary);
+                checkInput(secondaryInput, key.secondary);
+                checkInput(identifierInput, key.identifier);
+            });
+        });
+        
+        function checkInput(inputEl, answer) {
+            // Normalize spaces and case for simple checking
+            const val = inputEl.value.trim();
+            const ans = answer.trim();
+            
+            if (val.toLowerCase() === ans.toLowerCase()) {
+                inputEl.className = inputEl.className.replace(/ input-incorrect/g, '') + ' input-correct';
+            } else {
+                inputEl.className = inputEl.className.replace(/ input-correct/g, '') + ' input-incorrect';
+            }
+        }
+
+        // Reset FHIR Activity
+        resetFhirActivityBtn.addEventListener('click', () => {
+            fhirMappingAnswerKey.forEach((key, index) => {
+                document.getElementById(`fhir-resource-${index}`).value = '';
+                document.getElementById(`fhir-path-${index}`).value = '';
+                document.getElementById(`fhir-card-${index}`).value = '';
+                
+                document.getElementById(`fhir-resource-${index}`).className = document.getElementById(`fhir-resource-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`fhir-path-${index}`).className = document.getElementById(`fhir-path-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`fhir-card-${index}`).className = document.getElementById(`fhir-card-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+            });
+            
+            terminologyMappingAnswerKey.forEach((key, index) => {
+                document.getElementById(`term-primary-${index}`).value = '';
+                document.getElementById(`term-secondary-${index}`).value = '';
+                document.getElementById(`term-identifier-${index}`).value = '';
+                
+                document.getElementById(`term-primary-${index}`).className = document.getElementById(`term-primary-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`term-secondary-${index}`).className = document.getElementById(`term-secondary-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`term-identifier-${index}`).className = document.getElementById(`term-identifier-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+            });
+        });
+
+        // Submit FHIR Assignment
+        submitFhirAssignmentBtn.addEventListener('click', async () => {
+            if (!currentUserId) {
+                fhirStatusMessageEl.textContent = "You must be logged in to submit.";
+                return;
+            }
+
+            fhirStatusMessageEl.textContent = "Submitting...";
+            submitFhirAssignmentBtn.disabled = true;
+            submitFhirAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            let correctCount = 0;
+            const fhirMappingAnswers = [];
+            const terminologyMappingAnswers = [];
+
+            // Collect and score Table 3
+            fhirMappingAnswerKey.forEach((key, index) => {
+                const resourceAns = document.getElementById(`fhir-resource-${index}`).value.trim();
+                const pathAns = document.getElementById(`fhir-path-${index}`).value.trim();
+                const cardAns = document.getElementById(`fhir-card-${index}`).value.trim();
+
+                fhirMappingAnswers.push({ resource: resourceAns, path: pathAns, card: cardAns });
+
+                if (resourceAns.toLowerCase() === key.resource.toLowerCase()) correctCount++;
+                if (pathAns.toLowerCase() === key.path.toLowerCase()) correctCount++;
+                if (cardAns.toLowerCase() === key.card.toLowerCase()) correctCount++;
+            });
+            
+            // Collect and score Table 4
+            terminologyMappingAnswerKey.forEach((key, index) => {
+                const primaryAns = document.getElementById(`term-primary-${index}`).value.trim();
+                const secondaryAns = document.getElementById(`term-secondary-${index}`).value.trim();
+                const identifierAns = document.getElementById(`term-identifier-${index}`).value.trim();
+                
+                terminologyMappingAnswers.push({ primary: primaryAns, secondary: secondaryAns, identifier: identifierAns });
+                
+                if (primaryAns.toLowerCase() === key.primary.toLowerCase()) correctCount++;
+                if (secondaryAns.toLowerCase() === key.secondary.toLowerCase()) correctCount++;
+                if (identifierAns.toLowerCase() === key.identifier.toLowerCase()) correctCount++;
+            });
+            
+            const totalCount = (fhirMappingAnswerKey.length * 3) + (terminologyMappingAnswerKey.length * 3);
+            const score = (correctCount / totalCount) * 100;
+
+            const submission = {
+                userId: currentUserId,
+                userName: currentUserName,
+                userEmail: currentUserEmail,
+                submittedAt: new Date().toISOString(),
+                fhirMapping: fhirMappingAnswers,
+                terminologyMapping: terminologyMappingAnswers,
+                score: parseFloat(score.toFixed(2))
+            };
+
+            // Save to Firestore in a *different* collection
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "fhirSubmissions", currentUserId);
+
+            try {
+                await setDoc(submissionRef, submission);
+                fhirStatusMessageEl.textContent = "Submission successful! Your work is saved.";
+            } catch (error) {
+                console.error("Error submitting assignment 2:", error);
+                fhirStatusMessageEl.textContent = `Error: ${error.message}. Please try again.`;
+                submitFhirAssignmentBtn.disabled = false;
+                submitFhirAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+    </script>
+</body>
+</html>
+
