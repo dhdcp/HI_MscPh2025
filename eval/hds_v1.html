@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock EMR: Data Standardization Activity</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for feedback */
+        .input-correct {
+            border-color: #10B981; /* green-500 */
+            box-shadow: 0 0 0 2px #A7F3D0; /* green-200 */
+        }
+        .input-incorrect {
+            border-color: #EF4444; /* red-500 */
+            box-shadow: 0 0 0 2px #FECDD3; /* red-200 */
+        }
+        .feedback-cell {
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding-left: 0.75rem;
+        }
+        .feedback-correct {
+            color: #10B981; /* green-600 */
+        }
+        .feedback-incorrect {
+            color: #EF4444; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Login View -->
+    <div id="login-view" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-10 rounded-lg shadow-xl text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Interoperability Activity</h1>
+            <p class="text-gray-600 mb-8">Please sign in to continue.</p>
+            <button id="google-login-btn" class="flex items-center justify-center w-full px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50">
+                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                <span class="font-semibold text-gray-700">Sign in with Google</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Application View (Hidden by default) -->
+    <div id="app-view" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 hidden">
+        
+        <!-- App Header -->
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <span class="text-gray-700">Welcome, <strong id="user-name"></strong>!</span>
+                <span class="text-gray-500 text-sm ml-2" id="user-email"></span>
+            </div>
+            <button id="sign-out-btn" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600 transition duration-300 text-sm">Sign Out</button>
+        </div>
+
+        <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">Mock EMR: Data Standardization Activity</h1>
+                <p class="text-lg text-gray-600">Welcome, junior health informatician! Your job is to standardize the "dirty" EMR data below using international terminologies.</p>
+            </div>
+
+            <!-- Instructions Section -->
+            <div class="p-6 sm:p-8">
+                <!-- ... (Instructions content remains the same) ... -->
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Student Instructions</h2>
+                <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                    <li>Review the **"Original 'Dirty' EMR Data"** table (Table 1).</li>
+                    <li>Go to the **"Student Assignment Table"** (Table 2).</li>
+                    <li>Read the `Doctor's Notes` and `Final Diagnosis` text from Table 1 for each patient.</li>
+                    <li>Use the **OHDSI Athena browser** linked below to find the best matching code for all three columns (SNOMED, LOINC, ICD).</li>
+                    <li>Type your answers into the input boxes.</li>
+                    <li>Click **"Check Answers"** to get self-feedback (this is not your final submission).
+                    <li>When you are confident, click **"Submit for Grading"**.</li>
+                </ol>
+
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Terminology Tool</h3>
+                <div class="flex flex-wrap gap-4">
+                    <a href="https://athena.ohdsi.org/search-terms/start" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-300">
+                        OHDSI Athena Terminology Browser (SNOMED, LOINC, ICD, etc.)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Table 1: Dirty Data -->
+            <div class="p-6 sm:p-8 border-t border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 1: Original "Dirty" EMR Data (Reference)</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor's Notes</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lab Test Ordered</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Final Diagnosis (Text)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="dirty-data-body">
+                            <!-- Rows will be injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 2: Assignment Table -->
+            <div class="p-6 sm:p-8 border-t border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Table 2: Student Assignment Table</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Final Diagnosis (Text)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SNOMED_Code (Symptom)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LOINC_Code (Lab Test)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ICD_Code (Diagnosis)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="assignment-body">
+                            <!-- Rows will be injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-6 flex flex-wrap gap-4 items-center">
+                    <button id="check-answers" class="px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition duration-300">Check Answers</button>
+                    <button id="reset-activity" class="px-5 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow hover:bg-gray-600 transition duration-300">Reset</button>
+                    <button id="toggle-key" class="px-5 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition duration-300">Show Answer Key</button>
+                    <button id="submit-assignment" class="px-5 py-2 bg-blue-700 text-white font-bold rounded-lg shadow hover:bg-blue-800 transition duration-300">Submit for Grading</button>
+                    <span id="status-message" class="text-gray-700 font-medium"></span>
+                </div>
+            </div>
+
+            <!-- Answer Key (Hidden by default) -->
+            <div id="answer-key-section" class="p-6 sm:p-8 border-t border-gray-200 hidden">
+                <!-- ... (Answer Key content remains the same) ... -->
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Answer Key</h2>
+                <p class="text-gray-600 mb-4">Note: Students may find different, but still valid, codes. This is a great discussion point about "semantic mapping"!</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SNOMED_Code</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LOINC_Code</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ICD_Code</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="answer-key-body">
+                            <!-- Answer key rows will be injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signOut, 
+            onAuthStateChanged,
+            signInAnonymously,
+            signInWithCustomToken
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc,
+            setLogLevel
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Config ---
+        // These global variables are provided by the environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseConfig;
+        try {
+            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        } catch (e) {
+            console.error("Firebase config is not valid JSON", e);
+            firebaseConfig = {}; // Fallback
+        }
+
+        // --- Initialize Firebase ---
+        let app, auth, db;
+        let currentUserId = null;
+        let currentUserName = null;
+        let currentUserEmail = null;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            setLogLevel('Debug');
+        } catch (e) {
+            console.error("Error initializing Firebase:", e);
+            document.body.innerHTML = "Error initializing Firebase. Please check console.";
+        }
+
+
+        // --- DOM Elements ---
+        const loginView = document.getElementById('login-view');
+        const appView = document.getElementById('app-view');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+        const checkAnswersBtn = document.getElementById('check-answers');
+        const resetActivityBtn = document.getElementById('reset-activity');
+        const toggleKeyBtn = document.getElementById('toggle-key');
+        const submitAssignmentBtn = document.getElementById('submit-assignment');
+        const statusMessageEl = document.getElementById('status-message');
+        
+        const dirtyBody = document.getElementById('dirty-data-body');
+        const assignmentBody = document.getElementById('assignment-body');
+        const answerKeyBody = document.getElementById('answer-key-body');
+        const answerKeySection = document.getElementById('answer-key-section');
+
+        // --- Data ---
+        const dirtyData = [
+            { name: "Maria Chen", notes: "Complains of severe chest pain and shortness of breath. Hx of MI.", lab: '"Troponin T, 4th gen"', diagnosis: "Acute Myocardial Infarction" },
+            { name: "David Lee", notes: "Patient has uncontrolled diabetes. Presents with 2cm ulcer on right foot.", lab: '"Blood Sugar"', diagnosis: "Type 2 diabetes with foot ulcer" },
+            { name: "Sarah Jenkins", notes: "Fever, bad cough, and body aches for 3 days. Suspect flu.", lab: '"Rapid flu test"', diagnosis: "Influenza with pneumonia" },
+            { name: "Kenji Tanaka", notes: "Routine annual checkup. Patient feels well. Screen for kidney function.", lab: '"Creatinine level"', diagnosis: "Routine health check" },
+            { name: "Anjali Sharma", notes: 'Patient reports being "very tired" and pale.', lab: '"Complete Blood Count"', diagnosis: "Iron deficiency anemia" }
+        ];
+
+        const answerKey = [
+            { name: "Maria Chen", snomed: "29857009", loinc: "6598-7", icd: "BA41.0" },
+            { name: "David Lee", snomed: "163040003", loinc: "14749-6", icd: "9B71.1&KC92.2" },
+            { name: "Sarah Jenkins", snomed: "49727002", loinc: "94500-6", icd: "1C21.0" },
+            { name: "Kenji Tanaka", snomed: "185349003", loinc: "2160-0", icd: "QA00" },
+            { name: "Anjali Sharma", snomed: "271737000", loinc: "718-7", icd: "3A00" }
+        ];
+
+        // --- Functions ---
+
+        // Populate Table 1: Dirty Data
+        function populateDirtyTable() {
+            dirtyBody.innerHTML = ''; // Clear existing
+            dirtyData.forEach(row => {
+                dirtyBody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.notes}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.lab}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.diagnosis}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Populate Table 2: Assignment Table
+        function populateAssignmentTable() {
+            assignmentBody.innerHTML = ''; // Clear existing
+            dirtyData.forEach((row, index) => {
+                assignmentBody.innerHTML += `
+                    <tr class_id="assignment-row-${index}">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${row.diagnosis}</td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="snomed-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="SNOMED Code">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="loinc-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="LOINC Code">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" id="icd-${index}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ICD-11 Code">
+                        </td>
+                        <td class="feedback-cell" id="feedback-${index}"></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Populate Answer Key Table
+        function populateAnswerKey() {
+            answerKeyBody.innerHTML = ''; // Clear existing
+            answerKey.forEach(row => {
+                answerKeyBody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${row.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.snomed}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.loinc}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${row.icd}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // --- Auth Functions ---
+        
+        // Sign in with Google
+        googleLoginBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged will handle the UI update
+            } catch (error) {
+                console.error("Error signing in with Google:", error);
+                statusMessageEl.textContent = `Login Error: ${error.message}`;
+            }
+        });
+
+        // Sign out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // onAuthStateChanged will handle the UI update
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                currentUserId = user.uid;
+                currentUserName = user.displayName;
+                currentUserEmail = user.email;
+
+                userNameEl.textContent = currentUserName;
+                userEmailEl.textContent = `(${currentUserEmail})`;
+
+                // Show app, hide login
+                appView.classList.remove('hidden');
+                loginView.classList.add('hidden');
+
+                // Load app data
+                populateDirtyTable();
+                populateAssignmentTable();
+                populateAnswerKey();
+                
+                // Check for existing submission
+                checkExistingSubmission();
+
+            } else {
+                // User is signed out
+                currentUserId = null;
+                currentUserName = null;
+                currentUserEmail = null;
+
+                // Show login, hide app
+                appView.classList.add('hidden');
+                loginView.classList.remove('hidden');
+            }
+        });
+
+        // Check for existing submission
+        async function checkExistingSubmission() {
+            if (!currentUserId) return;
+
+            // Path: /artifacts/{appId}/public/data/submissions/{userId}
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "submissions", currentUserId);
+            
+            try {
+                const docSnap = await getDoc(submissionRef);
+
+                if (docSnap.exists()) {
+                    statusMessageEl.textContent = "You have already submitted this assignment.";
+                    submitAssignmentBtn.disabled = true;
+                    submitAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    // Load their previous answers
+                    const submissionData = docSnap.data();
+                    if (submissionData.answers) {
+                        submissionData.answers.forEach((answer, index) => {
+                            document.getElementById(`snomed-${index}`).value = answer.snomed || '';
+                            document.getElementById(`loinc-${index}`).value = answer.loinc || '';
+                            document.getElementById(`icd-${index}`).value = answer.icd || '';
+                        });
+                    }
+                } else {
+                    statusMessageEl.textContent = "Complete the activity and submit when ready.";
+                    submitAssignmentBtn.disabled = false;
+                    submitAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.error("Error checking submission:", error);
+                statusMessageEl.textContent = "Error checking previous submission.";
+            }
+        }
+        
+        // Initial Auth Check
+        (async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth); // Fallback for environments without token
+                }
+            } catch (error) {
+                console.error("Anonymous sign-in failed:", error);
+            }
+        })();
+
+
+        // --- Activity Functions ---
+
+        // Check Answers
+        checkAnswersBtn.addEventListener('click', () => {
+            answerKey.forEach((key, index) => {
+                const snomedInput = document.getElementById(`snomed-${index}`);
+                const loincInput = document.getElementById(`loinc-${index}`);
+                const icdInput = document.getElementById(`icd-${index}`);
+                const feedbackCell = document.getElementById(`feedback-${index}`);
+
+                let rowCorrect = 0;
+                
+                // Check SNOMED
+                if (snomedInput.value.trim() === key.snomed) {
+                    snomedInput.className = snomedInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    snomedInput.className = snomedInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Check LOINC
+                if (loincInput.value.trim() === key.loinc) {
+                    loincInput.className = loincInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    loincInput.className = loincInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Check ICD
+                if (icdInput.value.trim() === key.icd) {
+                    icdInput.className = icdInput.className.replace(/ input-incorrect/g, '') + ' input-correct';
+                    rowCorrect++;
+                } else {
+                    icdInput.className = icdInput.className.replace(/ input-correct/g, '') + ' input-incorrect';
+                }
+
+                // Update feedback cell
+                if (rowCorrect === 3) {
+                    feedbackCell.textContent = 'Correct!';
+                    feedbackCell.className = 'feedback-cell feedback-correct';
+                } else {
+                    feedbackCell.textContent = `Try again (${rowCorrect}/3 correct)`;
+                    feedbackCell.className = 'feedback-cell feedback-incorrect';
+                }
+            });
+        });
+
+        // Reset Activity
+        resetActivityBtn.addEventListener('click', () => {
+            answerKey.forEach((key, index) => {
+                document.getElementById(`snomed-${index}`).value = '';
+                document.getElementById(`loinc-${index}`).value = '';
+                document.getElementById(`icd-${index}`).value = '';
+
+                document.getElementById(`snomed-${index}`).className = document.getElementById(`snomed-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`loinc-${index}`).className = document.getElementById(`loinc-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                document.getElementById(`icd-${index}`).className = document.getElementById(`icd-${index}`).className.replace(/ input-correct| input-incorrect/g, '');
+                
+                document.getElementById(`feedback-${index}`).textContent = '';
+            });
+            // Don't reset submission status, only the fields
+        });
+
+        // Toggle Answer Key
+        toggleKeyBtn.addEventListener('click', (e) => {
+            const isHidden = answerKeySection.classList.contains('hidden');
+            if (isHidden) {
+                answerKeySection.classList.remove('hidden');
+                e.target.textContent = 'Hide Answer Key';
+                e.target.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                e.target.classList.add('bg-red-500', 'hover:bg-red-600');
+            } else {
+                answerKeySection.classList.add('hidden');
+                e.target.textContent = 'Show Answer Key';
+                e.target.classList.remove('bg-red-500', 'hover:bg-red-600');
+                e.target.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        });
+
+        // Submit Assignment
+        submitAssignmentBtn.addEventListener('click', async () => {
+            if (!currentUserId) {
+                statusMessageEl.textContent = "You must be logged in to submit.";
+                return;
+            }
+
+            statusMessageEl.textContent = "Submitting...";
+            submitAssignmentBtn.disabled = true;
+            submitAssignmentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Collect answers and calculate score
+            let correctCount = 0;
+            const totalCount = answerKey.length * 3; // 3 fields per row
+            const studentAnswers = [];
+
+            answerKey.forEach((key, index) => {
+                const snomedAns = document.getElementById(`snomed-${index}`).value.trim();
+                const loincAns = document.getElementById(`loinc-${index}`).value.trim();
+                const icdAns = document.getElementById(`icd-${index}`).value.trim();
+
+                studentAnswers.push({
+                    snomed: snomedAns,
+                    loinc: loincAns,
+                    icd: icdAns
+                });
+
+                if (snomedAns === key.snomed) correctCount++;
+                if (loincAns === key.loinc) correctCount++;
+                if (icdAns === key.icd) correctCount++;
+            });
+
+            const score = (correctCount / totalCount) * 100;
+
+            // Create submission object
+            const submission = {
+                userId: currentUserId,
+                userName: currentUserName,
+                userEmail: currentUserEmail,
+                submittedAt: new Date().toISOString(),
+                answers: studentAnswers,
+                score: parseFloat(score.toFixed(2))
+            };
+
+            // Save to Firestore
+            // We use the user's ID as the document ID to ensure they can only write their own submission.
+            // Path: /artifacts/{appId}/public/data/submissions/{userId}
+            const submissionRef = doc(db, "artifacts", appId, "public", "data", "submissions", currentUserId);
+
+            try {
+                await setDoc(submissionRef, submission);
+                statusMessageEl.textContent = "Submission successful! Your work is saved.";
+                // Button remains disabled
+            } catch (error) {
+                console.error("Error submitting assignment:", error);
+                statusMessageEl.textContent = `Error: ${error.message}. Please try again.`;
+                submitAssignmentBtn.disabled = false;
+                submitAssignmentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+    </script>
+</body>
+</html>
+
